@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexShop — Database Seeder</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; justify-content: center; align-items: center; padding: 20px; }
+    .seed-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; max-width: 560px; width: 100%; text-align: center; box-shadow: var(--shadow-lg); }
+    .seed-card h2 { margin-bottom: 8px; }
+    .seed-card p { color: var(--gray); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+    #status { margin-top: 20px; font-weight: 600; font-size: 15px; min-height: 24px; }
+    .progress-list { text-align: left; margin: 16px 0; padding: 16px 20px; background: var(--off-white); border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .progress-item { font-size: 13px; padding: 4px 0; color: var(--gray); transition: color 0.3s; }
+    .progress-item.done { color: var(--green); font-weight: 600; }
+    .progress-item.active { color: var(--teal); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="site-header" style="width:100%;position:fixed;top:0;">
+    <a href="index.html" class="logo">Nex<span>Shop</span></a>
+    <nav class="nav-actions">
+      <a href="index.html" class="btn btn-outline btn-sm">← Back to Store</a>
+    </nav>
+  </header>
+
+  <div class="seed-card" style="margin-top:80px;">
+    <div style="font-size:3rem;margin-bottom:12px;">🌱</div>
+    <h2>Database Seeder</h2>
+    <p>Populates your Firestore with 5 collections: <b>Categories</b>, <b>Products</b>, <b>Users</b>, <b>History</b>, and <b>Cart</b> — 10 records each (50 total).</p>
+    <p style="color:var(--red);font-weight:600;">⚠ This will overwrite existing records with matching IDs.</p>
+
+    <div class="progress-list">
+      <div class="progress-item" id="step-cat">⏳ Categories (10 records)</div>
+      <div class="progress-item" id="step-prod">⏳ Products (10 records)</div>
+      <div class="progress-item" id="step-users">⏳ Users (10 records)</div>
+      <div class="progress-item" id="step-hist">⏳ History (10 records)</div>
+      <div class="progress-item" id="step-cart">⏳ Cart (10 records)</div>
+    </div>
+
+    <button class="btn btn-success btn-lg" id="seedBtn">🚀 Seed Database Now</button>
+    <div id="status"></div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCbxXh6JT--QupqjomhP3oxtfap_S5EfBE",
+  authDomain: "my-ecommerce-8fa9b.firebaseapp.com",
+  projectId: "my-ecommerce-8fa9b",
+  storageBucket: "my-ecommerce-8fa9b.firebasestorage.app",
+  messagingSenderId: "674588239598",
+  appId: "1:674588239598:web:7f112531e664ad6e8f35ff"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const categoriesData = [
+  { category_id: "cat_001", category_name: "Electronics" },
+  { category_id: "cat_002", category_name: "Clothing & Apparel" },
+  { category_id: "cat_003", category_name: "Home & Kitchen" },
+  { category_id: "cat_004", category_name: "Books" },
+  { category_id: "cat_005", category_name: "Beauty & Personal Care" },
+  { category_id: "cat_006", category_name: "Sports & Outdoors" },
+  { category_id: "cat_007", category_name: "Toys & Games" },
+  { category_id: "cat_008", category_name: "Automotive" },
+  { category_id: "cat_009", category_name: "Grocery & Gourmet" },
+  { category_id: "cat_010", category_name: "Office Supplies" }
+];
+
+const productsData = [
+  { product_id: "prod_101", category_id: "cat_001", product_name: "Wireless Headphones", description: "Noise-canceling over-ear headphones.", price: 149.99, discount: 15, rating: 4.5, stock: 50, image_url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80" },
+  { product_id: "prod_102", category_id: "cat_001", product_name: "Smartphone X", description: "Latest generation 5G smartphone.", price: 799.99, discount: 10, rating: 4.8, stock: 25, image_url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80" },
+  { product_id: "prod_103", category_id: "cat_002", product_name: "Classic Denim Jacket", description: "Unisex vintage wash denim jacket.", price: 59.99, discount: 0, rating: 4.2, stock: 100, image_url: "https://images.unsplash.com/photo-1601370690183-1c7796ecec61?w=400&q=80" },
+  { product_id: "prod_104", category_id: "cat_002", product_name: "Running Shoes", description: "Lightweight breathable mesh sneakers.", price: 89.99, discount: 20, rating: 4.4, stock: 60, image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" },
+  { product_id: "prod_105", category_id: "cat_003", product_name: "Blender Pro 2000", description: "High-speed 3-horsepower kitchen blender.", price: 129.99, discount: 5, rating: 4.6, stock: 35, image_url: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=400&q=80" },
+  { product_id: "prod_106", category_id: "cat_003", product_name: "Ergonomic Office Chair", description: "Lumbar support mesh chair.", price: 199.99, discount: 25, rating: 4.1, stock: 15, image_url: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400&q=80" },
+  { product_id: "prod_107", category_id: "cat_004", product_name: "Sci-Fi Novel: The Cosmos", description: "An epic space opera paperback.", price: 14.99, discount: 0, rating: 4.9, stock: 200, image_url: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&q=80" },
+  { product_id: "prod_108", category_id: "cat_005", product_name: "Hydrating Face Serum", description: "Pure hyaluronic acid facial serum.", price: 24.50, discount: 10, rating: 4.7, stock: 85, image_url: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80" },
+  { product_id: "prod_109", category_id: "cat_006", product_name: "Yoga Mat", description: "Eco-friendly non-slip exercise mat.", price: 29.99, discount: 0, rating: 4.3, stock: 120, image_url: "https://images.unsplash.com/photo-1601925228008-f2ec6b8e8dce?w=400&q=80" },
+  { product_id: "prod_110", category_id: "cat_007", product_name: "Building Blocks Set", description: "500-piece creative block set for kids.", price: 39.99, discount: 12, rating: 4.6, stock: 40, image_url: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&q=80" }
+];
+
+const usersData = [
+  { userid: "usr_201", first_name: "John",   last_name: "Doe",       email: "john@example.com",    mobile: "1234567890", password: "password123",  credit_limit: 5000,  user_admin: "user",  created_at: "2026-01-15T10:00:00Z" },
+  { userid: "usr_202", first_name: "Jane",   last_name: "Smith",     email: "jane@example.com",    mobile: "2345678901", password: "admin123",     credit_limit: 10000, user_admin: "admin", created_at: "2026-01-16T11:30:00Z" },
+  { userid: "usr_203", first_name: "Alice",  last_name: "Johnson",   email: "alice@example.com",   mobile: "3456789012", password: "password123",  credit_limit: 3000,  user_admin: "user",  created_at: "2026-02-01T08:15:00Z" },
+  { userid: "usr_204", first_name: "Bob",    last_name: "Brown",     email: "bob@example.com",     mobile: "4567890123", password: "password123",  credit_limit: 4500,  user_admin: "user",  created_at: "2026-02-12T14:22:00Z" },
+  { userid: "usr_205", first_name: "Charlie",last_name: "Green",     email: "charlie@example.com", mobile: "5678901234", password: "password123",  credit_limit: 7500,  user_admin: "user",  created_at: "2026-03-05T17:45:00Z" },
+  { userid: "usr_206", first_name: "Diana",  last_name: "Prince",    email: "diana@example.com",   mobile: "6789012345", password: "superadmin",   credit_limit: 15000, user_admin: "admin", created_at: "2026-03-20T09:00:00Z" },
+  { userid: "usr_207", first_name: "Evan",   last_name: "Wright",    email: "evan@example.com",    mobile: "7890123456", password: "password123",  credit_limit: 2000,  user_admin: "user",  created_at: "2026-04-02T12:10:00Z" },
+  { userid: "usr_208", first_name: "Fiona",  last_name: "Gallagher", email: "fiona@example.com",   mobile: "8901234567", password: "password123",  credit_limit: 3500,  user_admin: "user",  created_at: "2026-04-18T16:35:00Z" },
+  { userid: "usr_209", first_name: "George", last_name: "Clark",     email: "george@example.com",  mobile: "9012345678", password: "password123",  credit_limit: 6000,  user_admin: "user",  created_at: "2026-05-01T11:05:00Z" },
+  { userid: "usr_210", first_name: "Hannah", last_name: "Lewis",     email: "hannah@example.com",  mobile: "0123456789", password: "password123",  credit_limit: 8000,  user_admin: "user",  created_at: "2026-05-10T15:50:00Z" }
+];
+
+const historyData = [
+  { bill_no: "BILL_501", userid: "usr_201", product_id: "prod_101", product_name: "Wireless Headphones",   quantity: 1, cost: 127.49, mode_of_payment: "Credit/Debit Card",  estimated_delivery_date: "2026-05-22", timestamp: "2026-05-17T14:30:00Z" },
+  { bill_no: "BILL_502", userid: "usr_203", product_id: "prod_103", product_name: "Classic Denim Jacket",  quantity: 2, cost: 119.98, mode_of_payment: "UPI",                  estimated_delivery_date: "2026-05-24", timestamp: "2026-05-17T15:12:00Z" },
+  { bill_no: "BILL_503", userid: "usr_204", product_id: "prod_107", product_name: "Sci-Fi Novel: The Cosmos",quantity: 1, cost: 14.99, mode_of_payment: "Net Banking",          estimated_delivery_date: "2026-05-26", timestamp: "2026-05-17T16:45:00Z" },
+  { bill_no: "BILL_504", userid: "usr_205", product_id: "prod_105", product_name: "Blender Pro 2000",       quantity: 1, cost: 123.49, mode_of_payment: "Credit/Debit Card",   estimated_delivery_date: "2026-05-21", timestamp: "2026-05-18T09:00:00Z" },
+  { bill_no: "BILL_505", userid: "usr_207", product_id: "prod_109", product_name: "Yoga Mat",               quantity: 1, cost: 29.99,  mode_of_payment: "Cash on Delivery",     estimated_delivery_date: "2026-05-25", timestamp: "2026-05-18T10:15:00Z" },
+  { bill_no: "BILL_506", userid: "usr_201", product_id: "prod_104", product_name: "Running Shoes",          quantity: 1, cost: 71.99,  mode_of_payment: "Credit/Debit Card",   estimated_delivery_date: "2026-05-23", timestamp: "2026-05-18T11:00:00Z" },
+  { bill_no: "BILL_507", userid: "usr_208", product_id: "prod_108", product_name: "Hydrating Face Serum",   quantity: 2, cost: 44.10,  mode_of_payment: "UPI",                  estimated_delivery_date: "2026-05-25", timestamp: "2026-05-18T12:30:00Z" },
+  { bill_no: "BILL_508", userid: "usr_209", product_id: "prod_106", product_name: "Ergonomic Office Chair", quantity: 1, cost: 149.99, mode_of_payment: "Net Banking",          estimated_delivery_date: "2026-05-24", timestamp: "2026-05-18T13:14:00Z" },
+  { bill_no: "BILL_509", userid: "usr_210", product_id: "prod_110", product_name: "Building Blocks Set",    quantity: 1, cost: 35.19,  mode_of_payment: "Credit/Debit Card",   estimated_delivery_date: "2026-05-26", timestamp: "2026-05-18T14:02:00Z" },
+  { bill_no: "BILL_510", userid: "usr_203", product_id: "prod_102", product_name: "Smartphone X",           quantity: 1, cost: 719.99, mode_of_payment: "Cash on Delivery",     estimated_delivery_date: "2026-05-22", timestamp: "2026-05-18T14:45:00Z" }
+];
+
+const cartData = [
+  { cart_id: "crt_301", userid: "usr_201", product_id: "prod_103", product_name: "Classic Denim Jacket",  quantity: 1, price: 59.99 },
+  { cart_id: "crt_302", userid: "usr_203", product_id: "prod_108", product_name: "Hydrating Face Serum",  quantity: 3, price: 24.50 },
+  { cart_id: "crt_303", userid: "usr_204", product_id: "prod_101", product_name: "Wireless Headphones",   quantity: 1, price: 149.99 },
+  { cart_id: "crt_304", userid: "usr_205", product_id: "prod_110", product_name: "Building Blocks Set",   quantity: 2, price: 39.99 },
+  { cart_id: "crt_305", userid: "usr_207", product_id: "prod_104", product_name: "Running Shoes",         quantity: 1, price: 89.99 },
+  { cart_id: "crt_306", userid: "usr_208", product_id: "prod_107", product_name: "Sci-Fi Novel: The Cosmos", quantity: 5, price: 14.99 },
+  { cart_id: "crt_307", userid: "usr_210", product_id: "prod_105", product_name: "Blender Pro 2000",      quantity: 1, price: 129.99 },
+  { cart_id: "crt_308", userid: "usr_201", product_id: "prod_109", product_name: "Yoga Mat",              quantity: 2, price: 29.99 },
+  { cart_id: "crt_309", userid: "usr_209", product_id: "prod_102", product_name: "Smartphone X",          quantity: 1, price: 799.99 },
+  { cart_id: "crt_310", userid: "usr_204", product_id: "prod_106", product_name: "Ergonomic Office Chair", quantity: 1, price: 199.99 }
+];
+
+function step(id, state) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = "progress-item " + state;
+  el.textContent = (state === "done" ? "✅ " : state === "active" ? "⏳ " : "⏳ ") + el.textContent.replace(/^[✅⏳] /, "");
+}
+
+document.getElementById("seedBtn").addEventListener("click", async () => {
+  const btn    = document.getElementById("seedBtn");
+  const status = document.getElementById("status");
+  btn.disabled = true;
+  btn.textContent = "Seeding…";
+  status.textContent = "";
+  status.style.color = "";
+
+  try {
+    step("step-cat", "active");
+    for (const item of categoriesData) await setDoc(doc(db, "categories", item.category_id), item);
+    step("step-cat", "done");
+
+    step("step-prod", "active");
+    for (const item of productsData)   await setDoc(doc(db, "products",   item.product_id),  item);
+    step("step-prod", "done");
+
+    step("step-users", "active");
+    for (const item of usersData)      await setDoc(doc(db, "users",      item.userid),       item);
+    step("step-users", "done");
+
+    step("step-hist", "active");
+    for (const item of historyData)    await setDoc(doc(db, "history",    item.bill_no),      item);
+    step("step-hist", "done");
+
+    step("step-cart", "active");
+    for (const item of cartData)       await setDoc(doc(db, "cart",       item.cart_id),      item);
+    step("step-cart", "done");
+
+    status.style.color = "var(--green)";
+    status.textContent = "🎉 Database seeded! 50 records written.";
+    btn.textContent = "Seed Complete ✓";
+
+    setTimeout(() => {
+      if (confirm("Seed complete! Go to the store?")) window.location.href = "index.html";
+    }, 800);
+
+  } catch (err) {
+    status.style.color = "var(--red)";
+    status.textContent = "❌ Error: " + err.message;
+    btn.disabled = false;
+    btn.textContent = "Retry";
+  }
+});
+</script>
+</body>
+</html>

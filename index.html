@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexShop — Premium Marketplace</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+  <a href="#" class="logo" id="homeLogo">Nex<span>Shop</span></a>
+  <nav class="nav-actions">
+    <span class="nav-greeting" id="userGreeting">Welcome, Guest</span>
+    <button class="btn btn-outline btn-sm btn-sm-hide" id="profileBtn" style="display:none;">👤 My Account</button>
+    <button class="btn btn-outline btn-sm btn-sm-hide" id="adminPanelBtn" style="display:none;">⚙ Admin</button>
+    <button class="btn btn-outline btn-sm" id="authNavBtn">Login / Register</button>
+    <button class="btn btn-amber btn-sm" id="openCartBtn">🛒 Cart <span class="cart-badge" id="cartBadge">0</span></button>
+  </nav>
+</header>
+
+<!-- ========== MAIN CONTENT AREA ========== -->
+<main>
+
+  <!-- VIEW 1: STOREFRONT -->
+  <section id="storefrontView" class="view-section active">
+    <div class="container">
+
+      <!-- Search + Filter Row -->
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍  Search products…" />
+      </div>
+
+      <!-- Category chips -->
+      <div class="category-bar" id="categoryBar">
+        <div class="cat-chip active" data-id="all">All Products</div>
+      </div>
+
+      <!-- Products grid -->
+      <div class="products-grid" id="productsGrid">
+        <div class="empty-state" style="grid-column:1/-1">
+          <span class="icon">⏳</span>
+          <p>Loading products…</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIEW 2: USER PROFILE -->
+  <section id="profileView" class="view-section">
+    <div class="container">
+      <div class="page-title-row">
+        <h2>My Account</h2>
+        <button class="btn btn-ghost" id="backToStoreBtn">← Back to Store</button>
+      </div>
+
+      <!-- Profile header card -->
+      <div class="profile-header-card" id="profileHeaderCard">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div>
+          <div class="profile-name" id="profileName">—</div>
+          <div class="profile-meta" id="profileMeta">—</div>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:16px;">Purchase History</h3>
+      <div id="historyContainer">
+        <div class="empty-state">
+          <span class="icon">📦</span>
+          <p>No orders yet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ========== CART OVERLAY + DRAWER ========== -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="modal-close" id="closeCartBtn">&times;</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty">
+      <span class="icon">🛍️</span>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span id="cartTotal">₹0.00</span>
+    </div>
+    <button class="btn btn-success btn-full btn-lg" id="checkoutBtn">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<!-- ========== AUTH MODAL ========== -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="authTitle">Sign In</h3>
+      <button class="modal-close" id="closeAuthBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Sign In</div>
+        <div class="auth-tab" data-tab="register">Create Account</div>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-tab-panel active" id="loginPanel">
+        <form id="loginForm">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:6px;">Sign In</button>
+        </form>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-tab-panel" id="registerPanel">
+        <form id="registerForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="regFirst" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="regLast" class="form-control" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="regMobile" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="regEmail" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="regPassword" class="form-control" required />
+          </div>
+          <button type="submit" class="btn btn-success btn-full btn-lg" style="margin-top:6px;">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAYMENT MODAL ========== -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-card payment-modal-card">
+    <div class="modal-header">
+      <h3>Checkout</h3>
+      <button class="modal-close" id="closePaymentBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="paymentForm">
+        <div class="form-group">
+          <label>Delivery Address</label>
+          <input type="text" id="payAddress" class="form-control" placeholder="123 Main St, City, State, ZIP" required />
+        </div>
+
+        <div class="form-group">
+          <label>Payment Method</label>
+          <div class="pay-methods-grid">
+            <label class="pay-method selected">
+              <input type="radio" name="payMethod" value="Credit/Debit Card" checked />
+              <span class="pay-icon">💳</span> Card
+            </label>
+            <label class="pay-method">
+              <input type="radio" name="payMethod" value="UPI" />
+              <span class="pay-icon">📱</span> UPI
+            </label>
+            <label class="pay-method">
+              <input type="radio" name="payMethod" value="Net Banking" />
+              <span class="pay-icon">🏦</span> Net Banking
+            </label>
+            <label class="pay-method">
+              <input type="radio" name="payMethod" value="Cash on Delivery" />
+              <span class="pay-icon">💵</span> Cash on Delivery
+            </label>
+          </div>
+        </div>
+
+        <!-- Order summary -->
+        <div class="pay-summary" id="paySummary">
+          <!-- filled by JS -->
+        </div>
+
+        <button type="submit" class="btn btn-success btn-full btn-lg">Confirm Order &amp; Pay →</button>
+      </form>
+      <button class="btn btn-ghost btn-full" id="cancelPaymentBtn" style="margin-top:8px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BILL / RECEIPT MODAL ========== -->
+<div class="modal-overlay" id="billModal">
+  <div class="modal-card bill-modal-card" style="max-width:660px;">
+    <div class="bill-header" id="billHeader">
+      <div>
+        <h3>✅ Order Confirmed!</h3>
+        <p style="font-size:13px; opacity:0.85; margin-top:4px;">Your receipt is ready. Save it for your records.</p>
+      </div>
+      <button class="modal-close" id="closeBillBtn" style="color:white;">&times;</button>
+    </div>
+    <div class="bill-body" id="billContent">
+      <!-- filled dynamically -->
+    </div>
+    <div style="padding:0 24px 24px; display:flex; gap:10px; flex-shrink:0;">
+      <button class="btn btn-ghost" id="closeBillBtn2">Close Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOAST CONTAINER ========== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <p>&copy; 2026 NexShop · All rights reserved.</p>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
