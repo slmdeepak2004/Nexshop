@@ -97,7 +97,7 @@ function updateStats() {
   document.getElementById("statOrders").textContent = billNos.size;
 
   const revenue = allOrders.reduce((s, o) => s + (o.cost || 0), 0);
-  document.getElementById("statRevenue").textContent = `$${revenue.toFixed(0)}`;
+  document.getElementById("statRevenue").textContent = `₹${revenue.toFixed(0)}`;
 }
 
 // ─── Inventory Table ──────────────────────────────────────

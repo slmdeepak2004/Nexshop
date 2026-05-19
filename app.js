@@ -1,7 +1,7 @@
 // app.js — NexShop Storefront Logic
 import { db } from "./firebase-config.js";
 import {
-  collection, getDocs, addDoc, doc, setDoc, query, where, orderBy
+  collection, getDocs, addDoc, doc, setDoc, updateDoc, increment, query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // ─── State ────────────────────────────────────────────────
@@ -152,6 +152,17 @@ searchInput.addEventListener("input", () => {
 
 // ─── Cart Logic ────────────────────────────────────────────
 function addToCart(product) {
+  // Check current stock vs quantity already in cart
+  const alreadyInCart = cart.find(i => i.product_id === product.product_id);
+  const cartQty = alreadyInCart ? alreadyInCart.quantity : 0;
+  if (product.stock <= 0) {
+    showToast(`"${product.product_name}" is out of stock.`, "error");
+    return;
+  }
+  if (cartQty >= product.stock) {
+    showToast(`Only ${product.stock} unit(s) available — you already have ${cartQty} in cart.`, "error");
+    return;
+  }
   const price = product.discount > 0
     ? parseFloat((product.price - product.price * product.discount / 100).toFixed(2))
     : product.price;
@@ -198,6 +209,12 @@ function syncCart() {
       </div>
     `;
     el.querySelector("[data-action='inc']").addEventListener("click", () => {
+      const prod = products.find(p => p.product_id === cart[idx].product_id);
+      const maxStock = prod ? prod.stock : Infinity;
+      if (cart[idx].quantity >= maxStock) {
+        showToast(`Only ${maxStock} unit(s) in stock`, "error");
+        return;
+      }
       cart[idx].quantity += 1; syncCart();
     });
     el.querySelector("[data-action='dec']").addEventListener("click", () => {
@@ -452,6 +469,13 @@ document.getElementById("paymentForm").addEventListener("submit", async e => {
         address,
         timestamp: now
       });
+      // Reduce stock in Firestore
+      await updateDoc(doc(db, "products", item.product_id), {
+        stock: increment(-item.quantity)
+      });
+      // Also update local products array so UI reflects new stock immediately
+      const localProd = products.find(p => p.product_id === item.product_id);
+      if (localProd) localProd.stock -= item.quantity;
     }
 
     currentBillData = { billNo, method, address, delivery, now, cart: [...cart], subtotal, tax, grandTotal };
@@ -460,6 +484,7 @@ document.getElementById("paymentForm").addEventListener("submit", async e => {
     syncCart();
     paymentModal.classList.remove("open");
     renderBill();
+    renderProducts(activeCatFilter, searchInput.value); // refresh stock labels & buttons
     showToast("Order placed successfully! 🎉", "success");
   } catch (err) {
     showToast("Payment failed. Try again.", "error");

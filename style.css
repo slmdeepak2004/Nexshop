@@ -1,3 +1,9 @@
+/* ============================================================
+   NexShop — Unified Design System
+   Font: DM Sans (body) + Playfair Display (logo/headings)
+   Theme: Clean merchant white with deep navy + amber accent
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
